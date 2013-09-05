@@ -48,8 +48,6 @@ namespace :heroku do
 
   def heroku_app
     ENV['TO'] ||= DEFAULT_REMOTE
-    app_name = HEROKU_GIT_REMOTES[ENV['TO'].to_sym]
-
-    app_name
+    HEROKU_GIT_REMOTES[ENV['TO'].to_sym]
   end
 end
