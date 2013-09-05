@@ -9,39 +9,43 @@ namespace :heroku do
     current_branch = `git branch | grep '*' | cut -d ' ' -f 2`.strip
     git_remote     = `git remote -v | grep 'git@heroku.*:#{heroku_app}.git' | grep -e push | cut -f 1 | cut -d : -f 3`.strip
 
-    puts "***** DEPLOYING TO #{heroku_app} *****"
-    puts "***** use the TO=git_remote option to specify a different environment *****"
+    puts "==> DEPLOYING TO #{current_branch} to master on #{heroku_app}"
+    puts "    Use the TO=git_remote option to specify a different environment"
 
-    sh "git push #{git_remote} #{current_branch}:master"
+    `git push #{git_remote} #{current_branch}:master`
   end
 
   task :restart => :heroku_command_line_client do
+    puts "==> Restarting #{heroku_app}"
     heroku_exec "restart"
   end
 
   task :ping => :heroku_command_line_client do
     url = heroku_exec("domains").split("\n").last.strip
     url = "#{heroku_app}.herokuapp.com" if url[/No domain names/]
-    sh "curl http://#{url}#{PING_ENDPOINT}"
+    `curl http://#{url}#{PING_ENDPOINT}`
   end
 
   namespace :db do
-    task :backup => :heroku_command_line_client do
+    task :backup => :heroku_command_line_client
+      puts "==> Capturing backup for #{heroku_app}"
       heroku_exec "pgbackups:capture"
     end
 
     task :migrate => :heroku_command_line_client do
-      puts "***** MIGRATING #{heroku_app} *****"
+      puts "==> Migrating #{heroku_app}"
       heroku_exec "run rake db:migrate"
     end
   end
 
   namespace :maintenance do
     task :on => :heroku_command_line_client do
+      puts "==> Maintenance ON for #{heroku_app}"
       heroku_exec "maintenance:on"
     end
 
     task :off => :heroku_command_line_client do
+      puts "==> Maintenance OFF for #{heroku_app}"
       heroku_exec "maintenance:off"
     end
   end
