@@ -27,7 +27,7 @@ namespace :heroku do
   end
 
   namespace :db do
-    task :backup => :heroku_command_line_client
+    task :backup => :heroku_command_line_client do
       puts "==> Capturing backup for #{heroku_app}"
       heroku_exec "pgbackups:capture"
     end
