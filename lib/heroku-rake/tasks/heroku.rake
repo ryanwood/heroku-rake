@@ -9,7 +9,7 @@ namespace :heroku do
     current_branch = `git branch | grep '*' | cut -d ' ' -f 2`.strip
     git_remote     = `git remote -v | grep 'git@heroku.*:#{heroku_app}.git' | grep -e push | cut -f 1 | cut -d : -f 3`.strip
 
-    puts "==> DEPLOYING TO #{current_branch} to master on #{heroku_app}"
+    puts "==> Deploying branch #{current_branch} -> master (#{heroku_app})"
     puts "    Use the TO=git_remote option to specify a different environment"
 
     `git push #{git_remote} #{current_branch}:master`
